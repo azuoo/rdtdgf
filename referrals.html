@@ -1,0 +1,20 @@
+<h2>رابط الدعوة الخاص بك:</h2>
+<p id="myLink"></p>
+
+<h2>عدد الأشخاص الذين سجلوا برابطك:</h2>
+<p id="refCount"></p>
+
+<script>
+  const email = localStorage.getItem("email");
+  const apiUrl = "https://script.google.com/macros/s/AKfycbx-OxGSvXjcd35seQ8Sz6zb_yEKXLPbujOgCi7CeZYR9IaQ56mqSqe9beVTWPj--D1PLg/exec";
+
+  fetch(`${apiUrl}?action=get&email=${email}`)
+    .then(res => res.json())
+    .then(data => {
+      const code = data.referralCode;
+      const count = data.referralsCount;
+      const myLink = https://azuoo.github.io/_usdt.com/login.html?ref=${code};
+      document.getElementById("myLink").innerText = myLink;
+      document.getElementById("refCount").innerText = count;
+    });
+</script>
