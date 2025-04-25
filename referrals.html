@@ -36,24 +36,32 @@
     <h3 style="margin-top:2rem;">عدد المسجلين عن طريقك:</h3>
     <div class="code-box" id="referralCount">0</div>
   </div>
+<script>
+  const userCode = localStorage.getItem('referralCode');
+  const userEmail = localStorage.getItem('email');
 
-  <script>
-    const userCode = localStorage.getItem('referralCode');
-    const fullLink = `https://azuoo.github.io/rdtdgf/index.html?ref=${userCode}`;
-    document.getElementById('referralLink').textContent = fullLink;
+  // عرض رابط الإحالة
+  const fullLink = https://azuoo.github.io/rdtdgf/index.html?ref=${userCode};
+  document.getElementById('referralLink').textContent = fullLink;
 
-    const scriptURL = "https://script.google.com/macros/s/AKfycbx-OxGSvXjcd35seQ8Sz6zb_yEKXLPbujOgCi7CeZYR9IaQ56mqSqe9beVTWPj--D1PLg/exec";
+  // رابط Google Script
+  const scriptURL = "https://script.google.com/macros/s/AKfycbxJQC3ZR2A4WoI9E0gHlakHg8YsqSVDfcVqchzgaOBVU7FCYfK9Vr3GP863HylHA5gk/exec";
 
-    fetch(scriptURL)
-      .then(res => res.json())
-      .then(data => {
-        const referred = data.filter(row => row.ReferredBy === userCode);
-        document.getElementById('referralCount').textContent = referred.length;
-      })
-      .catch(err => {
-        console.error(err);
-        document.getElementById('referralCount').textContent = "خطأ في الاتصال";
-      });
-  </script>
+  // جلب عدد الإحالات باستخدام البريد الإلكتروني
+  fetch(`${scriptURL}?email=${encodeURIComponent(userEmail)}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.referrals_count !== undefined) {
+        document.getElementById('referralCount').textContent = data.referrals_count;
+      } else {
+        document.getElementById('referralCount').textContent = "لا يوجد بيانات";
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById('referralCount').textContent = "خطأ في الاتصال";
+    });
+</script>
+  
 </body>
 </html>
