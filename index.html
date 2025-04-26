@@ -61,49 +61,43 @@
   <button onclick="registerUser()">تسجيل</button>
   <p id="message"></p>
 </div>
-
 <script>
-function generateReferralCode() {
-  return Math.random().toString(36).substring(2, 8).toUpperCase();
-}
+const apiURL = 'https://script.google.com/macros/s/AKfycbxQjXZeZRnyl_szPuR82O2W78LKqQJnZ5gzRLlY1kwNnvZdt1L5tq2CJSCHiIhAGKc45w/exec';
 
 function registerUser() {
-  const email = document.getElementById('email').value.trim();
-  const message = document.getElementById('message');
+  const email = document.getElementById('email').value;
+  const referredBy = new URLSearchParams(window.location.search).get('ref') || '';
+  const referralCode = generateRandomCode();
 
-  if (!email) {
-    message.innerText = "يرجى إدخال البريد الإلكتروني.";
-    return;
-  }
+  // أولا نضيف المستخدم الجديد
+  fetch(apiURL + '?action=addUser&email=' + encodeURIComponent(email) + '&referralCode=' + referralCode + '&referredBy=' + referredBy)
+    .then(response => response.text())
+    .then(data => {
+      console.log(data);
 
-  message.innerText = "جاري التسجيل...";
+      // إذا كان سجل عبر إحالة، نزيد عداد الإحالات
+      if (referredBy) {
+        fetch(apiURL + '?action=incrementReferral&referralCode=' + referredBy)
+          .then(response => response.text())
+          .then(data => {
+            console.log('Referral incremented:', data);
+          });
+      }
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const referredBy = urlParams.get('ref');
-  const referralCode = generateReferralCode();
-
-  const fullUrl = 'https://script.google.com/macros/s/AKfycbzxITV-KAC7_KcIlOSygQMIIqYbTEoSnb-9l7QoJ45pLYR-ES2ps0uWPESO8kFifL9H8Q/exec?action=register&email=' 
-        + encodeURIComponent(email) 
-        + '&referralCode=' + referralCode 
-        + (referredBy ? '&referredBy=' + referredBy : '');
-
-  fetch(fullUrl)
-  .then(response => response.text())
-  .then(data => {
-    console.log("رد السيرفر:", data); // <== طباعة الرد هنا
-    if (data.includes("تم") || data.includes("Registered") || data.includes("نجاح")) {
+      // نخزن البيانات محلياً وننقله للصفحة الرئيسية
       localStorage.setItem('email', email);
-      window.location.href = "home.html";
-    } else {
-      message.innerText = "فشل التسجيل: " + data;
-    }
-  })
-  .catch(error => {
-    message.innerText = "حدث خطأ أثناء التسجيل.";
-    console.error("خطأ:", error);
-  });
+      localStorage.setItem('referralCode', referralCode);
+      window.location.href = 'home.html';
+    });
+}
+
+function generateRandomCode() {
+  return Math.random().toString(36).substring(2, 8);
 }
 </script>
+
+<input type="email" id="email" placeholder="أدخل بريدك" required>
+<button onclick="registerUser()">تسجيل دخول</button>
 
 </body>
 </html>
