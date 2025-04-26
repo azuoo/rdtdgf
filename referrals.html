@@ -69,35 +69,52 @@
 
     <div id="referralCount" class="info loading" style="margin-top: 20px;">جاري التحميل...</div>
 </div>
+<h1>رابط إحالتك:</h1>
+<p id="referralLink">جارٍ التحميل...</p>
+<button onclick="copyLink()">نسخ الرابط</button>
+
+<h2>عدد الأشخاص الذين سجلوا عن طريقك:</h2>
+<p id="referralsCount">جارٍ التحميل...</p>
+
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const referralCode = localStorage.getItem('referralCode');
-    const userEmail = localStorage.getItem('userEmail');
+const apiURL = 'https://script.google.com/macros/s/AKfycbxQjXZeZRnyl_szPuR82O2W78LKqQJnZ5gzRLlY1kwNnvZdt1L5tq2CJSCHiIhAGKc45w/exec';
 
-    if (referralCode) {
-      document.getElementById('referralLink').innerText = https://azuoo.github.io/rdtdgf/signup.html?ref=${referralCode};
-    } else {
-      document.getElementById('referralLink').innerText = 'لم يتم العثور على كود الإحالة.';
-    }
+window.onload = function() {
+  const email = localStorage.getItem('email');
+  
+  if (!email) {
+    document.getElementById('referralLink').innerText = 'يرجى تسجيل الدخول أولاً';
+    return;
+  }
 
-    if (userEmail) {
-    fetch('https://script.google.com/macros/s/AKfycbzxITV-KAC7_KcIlOSygQMIIqYbTEoSnb-9l7QoJ45pLYR-ES2ps0uWPESO8kFifL9H8Q/exec?action=getUser&email=' + email)
-        .then(response => response.json())
-        .then(data => {
-          if (data.referrals_count !== undefined) {
-            document.getElementById('referralsCount').innerText = data.referrals_count;
-          } else {
-            document.getElementById('referralsCount').innerText = '0';
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          document.getElementById('referralsCount').innerText = 'خطأ في الاتصال';
-        });
-    } else {
-      document.getElementById('referralsCount').innerText = 'البريد الإلكتروني غير موجود.';
-    }
-  });
+  fetch(apiURL + '?action=getUser&email=' + encodeURIComponent(email))
+    .then(response => response.json())
+    .then(user => {
+      const baseUrl = window.location.origin + window.location.pathname.replace('referrals.html', 'index.html');
+      const referralLink = baseUrl + '?ref=' + user.referralCode;
+      
+      document.getElementById('referralLink').innerText = referralLink;
+      document.getElementById('referralsCount').innerText = user.referralsCount;
+
+      // نخزن الرابط للنسخ لاحقاً
+      window.generatedLink = referralLink;
+    })
+    .catch(error => {
+      document.getElementById('referralLink').innerText = 'حدث خطأ. تأكد من تسجيل الدخول.';
+      console.error(error);
+    });
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(window.generatedLink)
+    .then(() => {
+      alert('تم نسخ رابط الإحالة بنجاح!');
+    })
+    .catch(err => {
+      alert('حدث خطأ أثناء نسخ الرابط.');
+      console.error(err);
+    });
+}
 </script>
 </body>
 </html>
