@@ -63,10 +63,6 @@
 </div>
 
 <script>
-function generateReferralCode() {
-  return Math.random().toString(36).substring(2, 8).toUpperCase();
-}
-
 function registerUser() {
   const email = document.getElementById('email').value.trim();
   const message = document.getElementById('message');
@@ -88,12 +84,8 @@ function registerUser() {
         + (referredBy ? '&referredBy=' + referredBy : ''))
   .then(response => response.text())
   .then(data => {
-    if (data === "Registered") {
-      localStorage.setItem('email', email);
-      window.location.href = "home.html";
-    } else {
-      message.innerText = data;
-    }
+    localStorage.setItem('email', email);
+    window.location.href = "home.html";  // 🔥 مباشرة ننتقل إلى الصفحة الرئيسية
   })
   .catch(error => {
     message.innerText = "حدث خطأ أثناء التسجيل.";
