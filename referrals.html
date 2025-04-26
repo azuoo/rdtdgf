@@ -1,76 +1,30 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-  <title>صفحة الإحالات</title>
-  <style>
-    body {
-      background-color: #100622;
-      color: white;
-      font-family: "Tajawal", sans-serif;
-      text-align: center;
-      padding: 2rem;
-    }
-    .card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 14px;
-      padding: 2rem;
-      max-width: 400px;
-      margin: 0 auto;
-    }
-    .code-box {
-      background-color: #222;
-      padding: 1rem;
-      border-radius: 10px;
-      word-break: break-word;
-      margin-top: 1rem;
-    }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <h2>رابط الدعوة الخاص بك:</h2>
-    <div class="code-box" id="referralLink">جاري التحميل...</div>
-
-    <h3 style="margin-top:2rem;">عدد المسجلين عن طريقك:</h3>
-    <div class="code-box" id="referralCount">0</div>
-  </div>
-
-  <script>
-    // قراءة بيانات المستخدم من LocalStorage
-    const userCode = localStorage.getItem('referralCode');
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const referralCode = localStorage.getItem('referralCode');
     const userEmail = localStorage.getItem('userEmail');
 
-    // توليد رابط الدعوة
-    if (userCode) {
-      const fullLink = https://azuoo.github.io/rdtdgf/index.html?ref=${userCode};
-      document.getElementById('referralLink').textContent = fullLink;
+    if (referralCode) {
+      document.getElementById('referralLink').innerText = https://azuoo.github.io/rdtdgf/signup.html?ref=${referralCode};
     } else {
-      document.getElementById('referralLink').textContent = "لم يتم العثور على كود الإحالة.";
+      document.getElementById('referralLink').innerText = 'لم يتم العثور على كود الإحالة.';
     }
 
-    // رابط السكربت الخاص بك
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxPpRmsvO2Zwg0bNY6v_jpMpJXBmlk4rjNARWPgr_0hBZmPibRDuwhYsxJklb8iIcOocg/exec";
-
-    // إرسال طلب لجلب عدد المسجلين
     if (userEmail) {
-      fetch(`${scriptURL}?email=${encodeURIComponent(userEmail)}`)
-        .then(res => res.json())
+      fetch('https://script.google.com/macros/s/AKfycbxPpRmsvO2Zwg0bNY6v_jpMpJXBmlk4rjNARWPgr_0hBZmPibRDuwhYsxJklb8iIcOocg/exec?email=' + encodeURIComponent(userEmail))
+        .then(response => response.json())
         .then(data => {
-          if (data.error) {
-            document.getElementById('referralCount').textContent = "خطأ في جلب البيانات";
+          if (data.referrals_count !== undefined) {
+            document.getElementById('referralsCount').innerText = data.referrals_count;
           } else {
-            document.getElementById('referralCount').textContent = data.referrals_count || 0;
+            document.getElementById('referralsCount').innerText = '0';
           }
         })
-        .catch(err => {
-          console.error(err);
-          document.getElementById('referralCount').textContent = "خطأ في الاتصال";
+        .catch(error => {
+          console.error('Error:', error);
+          document.getElementById('referralsCount').innerText = 'خطأ في الاتصال';
         });
     } else {
-      document.getElementById('referralCount').textContent = "لم يتم العثور على البريد الإلكتروني.";
+      document.getElementById('referralsCount').innerText = 'البريد الإلكتروني غير موجود.';
     }
-  </script>
-</body>
-</html>
+  });
+</script>
