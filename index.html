@@ -63,6 +63,10 @@
 </div>
 
 <script>
+function generateReferralCode() {
+  return Math.random().toString(36).substring(2, 8).toUpperCase();
+}
+
 function registerUser() {
   const email = document.getElementById('email').value.trim();
   const message = document.getElementById('message');
@@ -78,18 +82,25 @@ function registerUser() {
   const referredBy = urlParams.get('ref');
   const referralCode = generateReferralCode();
 
-  fetch('https://script.google.com/macros/s/AKfycbzxITV-KAC7_KcIlOSygQMIIqYbTEoSnb-9l7QoJ45pLYR-ES2ps0uWPESO8kFifL9H8Q/exec?action=register&email=' 
+  const fullUrl = 'https://script.google.com/macros/s/AKfycbzxITV-KAC7_KcIlOSygQMIIqYbTEoSnb-9l7QoJ45pLYR-ES2ps0uWPESO8kFifL9H8Q/exec?action=register&email=' 
         + encodeURIComponent(email) 
         + '&referralCode=' + referralCode 
-        + (referredBy ? '&referredBy=' + referredBy : ''))
+        + (referredBy ? '&referredBy=' + referredBy : '');
+
+  fetch(fullUrl)
   .then(response => response.text())
   .then(data => {
-    localStorage.setItem('email', email);
-    window.location.href = "home.html";  // 🔥 مباشرة ننتقل إلى الصفحة الرئيسية
+    console.log("رد السيرفر:", data); // <== طباعة الرد هنا
+    if (data.includes("تم") || data.includes("Registered") || data.includes("نجاح")) {
+      localStorage.setItem('email', email);
+      window.location.href = "home.html";
+    } else {
+      message.innerText = "فشل التسجيل: " + data;
+    }
   })
   .catch(error => {
     message.innerText = "حدث خطأ أثناء التسجيل.";
-    console.error(error);
+    console.error("خطأ:", error);
   });
 }
 </script>
