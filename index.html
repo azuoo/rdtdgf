@@ -152,7 +152,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const ref = urlParams.get('ref') || '';
 
 // إرسال البيانات إلى Google Sheets
-fetch("https://script.google.com/macros/s/AKfycbxJQC3ZR2A4WoI9E0gHlakHg8YsqSVDfcVqchzgaOBVU7FCYfK9Vr3GP863HylHA5gk/exec", {
+fetch("https://script.google.com/macros/s/AKfycbxPpRmsvO2Zwg0bNY6v_jpMpJXBmlk4rjNARWPgr_0hBZmPibRDuwhYsxJklb8iIcOocg/exec", {
   method: "POST",
   body: JSON.stringify({
     email: email,
