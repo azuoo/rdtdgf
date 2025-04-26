@@ -81,7 +81,7 @@
     }
 
     if (userEmail) {
-      fetch('https://script.google.com/macros/s/AKfycbxPpRmsvO2Zwg0bNY6v_jpMpJXBmlk4rjNARWPgr_0hBZmPibRDuwhYsxJklb8iIcOocg/exec?email=' + encodeURIComponent(userEmail))
+    fetch('https://script.google.com/macros/s/AKfycbzxITV-KAC7_KcIlOSygQMIIqYbTEoSnb-9l7QoJ45pLYR-ES2ps0uWPESO8kFifL9H8Q/exec?action=getUser&email=' + email)
         .then(response => response.json())
         .then(data => {
           if (data.referrals_count !== undefined) {
